@@ -17,7 +17,7 @@ api_key = os.environ.get("DEEPSEEK_API_KEY", "sk-8b91d75e146e4b6e84881583f87d33c
 # 初始化客户端
 client = OpenAI(
     api_key=api_key,
-    base_url="https://api.deepseek.com/v4" 
+    base_url="https://api.deepseek.com" 
 )
 
 # 签文意象池
