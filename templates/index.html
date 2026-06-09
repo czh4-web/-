@@ -8,54 +8,23 @@
 <style>
     /* iOS Light Mode Color Palette */
     :root { 
-        --bg-color: #F2F2F7; /* iOS系统分组背景色 */
+        --bg-color: #F2F2F7; 
         --card-bg: #FFFFFF; 
-        --text-primary: #1C1C1E; /* iOS主要文本 */
-        --text-secondary: #8E8E93; /* iOS次要文本 */
-        --accent-color: #D70015; /* 提亮后的古典红，适配白底 */
+        --text-primary: #1C1C1E; 
+        --text-secondary: #8E8E93; 
+        --accent-color: #D70015; 
         --border-color: #E5E5EA; 
         --shadow-color: rgba(0, 0, 0, 0.06);
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     
-    body { 
-        background-color: var(--bg-color); 
-        color: var(--text-primary); 
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        min-height: 100vh; 
-    }
+    body { background-color: var(--bg-color); color: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
     
-    /* iOS Segmented Control (顶部导航) */
-    .nav-tabs { 
-        display: flex; 
-        width: calc(100% - 32px); 
-        max-width: 440px; 
-        margin: 20px auto; 
-        background-color: #E3E3E8; 
-        border-radius: 9px; 
-        padding: 2px;
-    }
-    .tab-btn { 
-        flex: 1; 
-        background: none; 
-        border: none; 
-        color: #1C1C1E; 
-        font-size: 14px; 
-        font-weight: 500;
-        padding: 6px 0; 
-        border-radius: 7px;
-        cursor: pointer; 
-        transition: all 0.2s ease; 
-    }
-    .tab-btn.active { 
-        background-color: #FFFFFF; 
-        font-weight: 600; 
-        box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); 
-    }
+    /* 顶部导航 */
+    .nav-tabs { display: flex; width: calc(100% - 32px); max-width: 440px; margin: 20px auto; background-color: #E3E3E8; border-radius: 9px; padding: 2px; }
+    .tab-btn { flex: 1; background: none; border: none; color: #1C1C1E; font-size: 14px; font-weight: 500; padding: 6px 0; border-radius: 7px; cursor: pointer; transition: all 0.2s ease; }
+    .tab-btn.active { background-color: #FFFFFF; font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); }
 
     .container { width: 100%; max-width: 480px; padding: 10px 20px 40px; text-align: center; }
     
@@ -73,12 +42,9 @@
     textarea { 
         width: 100%; 
         height: 140px; 
-        
-        /* 👇 修改这里：让背景始终为纯白，边框始终为淡红色，并带上红晕阴影 */
         background-color: #FFFFFF; 
         border: 1px solid rgba(215, 0, 21, 0.3); 
         box-shadow: 0 0 0 4px rgba(215, 0, 21, 0.08); 
-
         border-radius: 16px; 
         color: var(--text-primary); 
         padding: 16px; 
@@ -87,96 +53,41 @@
         resize: none; 
         margin-bottom: 24px; 
         transition: all 0.3s; 
-        
         outline: none; 
         -webkit-appearance: none; 
     }
-    
-    /* 👇 额外优化：为了保留交互感，当真正点击进去的时候，让红框稍微加深一点点 */
-    textarea:focus { 
-        outline: none; 
-        border-color: rgba(215, 0, 21, 0.6);
-        box-shadow: 0 0 0 4px rgba(215, 0, 21, 0.15); 
-    }
+    textarea:focus { outline: none; border-color: rgba(215, 0, 21, 0.6); box-shadow: 0 0 0 4px rgba(215, 0, 21, 0.15); }
     
     /* iOS 大圆角按钮 */
-    .btn { 
-        width: 100%;
-        background-color: var(--accent-color); 
-        color: #fff; 
-        border: none; 
-        padding: 14px 0; 
-        font-size: 17px; 
-        font-weight: 600;
-        border-radius: 14px; 
-        cursor: pointer; 
-        transition: 0.2s; 
-        margin-top: 10px; 
-    }
+    .btn { width: 100%; background-color: var(--accent-color); color: #fff; border: none; padding: 14px 0; font-size: 17px; font-weight: 600; border-radius: 14px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
     .btn:hover { background-color: #b50012; } 
     .btn:active { transform: scale(0.97); }
     .btn:disabled { background-color: #D1D1D6; color: #FFFFFF; cursor: not-allowed; }
     
     /* iOS 弥散阴影卡片 */
-    .card { 
-        background-color: var(--card-bg); 
-        border-radius: 20px; 
-        padding: 24px; 
-        margin-bottom: 24px; 
-        width: 100%; 
-        position: relative; 
-        box-shadow: 0 4px 24px var(--shadow-color);
-        text-align: left;
-    }
-    
+    .card { background-color: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; width: 100%; position: relative; box-shadow: 0 4px 24px var(--shadow-color); text-align: left; }
     .content-text { font-size: 16px; line-height: 1.6; color: #3A3A3C; }
     
     /* 每日运势专属样式 */
     .fortune-date { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; text-align: center; }
     .fortune-level { font-size: 56px; font-weight: 800; color: var(--accent-color); margin: 10px 0 20px; text-align: center; }
-    .do-dont-box { 
-        display: flex; 
-        justify-content: space-around; 
-        margin: 20px 0; 
-        padding: 20px 0; 
-        background-color: #F9F9FB;
-        border-radius: 16px;
-        text-align: center;
-    }
+    .do-dont-box { display: flex; justify-content: space-around; margin: 20px 0; padding: 20px 0; background-color: #F9F9FB; border-radius: 16px; text-align: center; }
     .do-item { color: #34C759; font-weight: 600; font-size: 18px;}
     .dont-item { color: #FF3B30; font-weight: 600; font-size: 18px;}
     .do-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
 
-    /* 求签摇一摇专属按钮 */
-    .shake-btn { 
-        width: 140px; 
-        height: 140px; 
-        border-radius: 50%; 
-        font-size: 22px; 
-        font-weight: 700; 
-        background: #FFFFFF; 
-        color: var(--accent-color);
-        box-shadow: 0 8px 30px rgba(215, 0, 21, 0.15);
-        margin: 0 auto;
-        display: block;
-    }
+    /* 求签摇晃专属按钮 */
+    .shake-btn { width: 140px; height: 140px; border-radius: 50%; font-size: 22px; font-weight: 700; background: #FFFFFF; color: var(--accent-color); box-shadow: 0 8px 30px rgba(215, 0, 21, 0.15); margin: 0 auto; display: block; }
     .shake-animation { animation: shake 0.5s infinite; }
-    @keyframes shake { 
-        0% { transform: translate(1px, 1px) rotate(0deg); } 
-        25% { transform: translate(-1px, -2px) rotate(-1deg); } 
-        50% { transform: translate(-3px, 0px) rotate(1deg); } 
-        75% { transform: translate(2px, 2px) rotate(-1deg); } 
-        100% { transform: translate(1px, -1px) rotate(0deg); } 
-    }
+    @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 25% { transform: translate(-1px, -2px) rotate(-1deg); } 50% { transform: translate(-3px, 0px) rotate(1deg); } 75% { transform: translate(2px, 2px) rotate(-1deg); } 100% { transform: translate(1px, -1px) rotate(0deg); } }
     .sign-title { font-size: 26px; font-weight: 800; color: var(--accent-color); margin-bottom: 24px; letter-spacing: 2px; text-align: center; }
-
 </style>
 </head>
 <body>
 
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchModule('daily')" id="tab-daily">每日运势</button>
-    <button class="tab-btn" onclick="switchModule('divination')" id="tab-divination">电子求签</button>
+    <button class="tab-btn" onclick="switchModule('divination')" id="tab-divination">心理除颤</button>
 </div>
 
 <div class="container">
@@ -185,7 +96,6 @@
         <div class="card">
             <div class="fortune-date" id="daily-date">计算中...</div>
             <div class="subtitle" style="text-align: center; margin-bottom: 10px;">今日赛博心理状态指南</div>
-            
             <div class="fortune-level" id="daily-level">--</div>
             
             <div class="do-dont-box">
@@ -194,33 +104,31 @@
                     <div class="do-item" id="daily-suitable">--</div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;" id="daily-suitable-desc">--</div>
                 </div>
-                
-                <div style="width: 1px; background-color: #E5E5EA; margin: 0 10px;"></div> <div style="flex: 1; padding: 0 10px;">
+                <div style="width: 1px; background-color: #E5E5EA; margin: 0 10px;"></div>
+                <div style="flex: 1; padding: 0 10px;">
                     <div class="do-label">忌</div>
                     <div class="dont-item" id="daily-unsuitable">--</div>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;" id="daily-unsuitable-desc">--</div>
                 </div>
             </div>
             
-            <div class="content-text" id="daily-quote" style="text-align: center; font-style: normal; font-weight: 500; font-size: 15px;">
-                "正在链接大模型获取今日心理护盾..."
-            </div>
+            <div class="content-text" id="daily-quote" style="text-align: center; font-style: normal; font-weight: 500; font-size: 15px;">"正在链接大模型获取今日心理护盾..."</div>
         </div>
     </div>
 
     <div id="module-divination" class="module">
+        
         <div id="step1" class="step active">
             <h1>深度心理除颤</h1>
             <div class="subtitle">遇到具体的困境？交给我来重构认知</div>
             <textarea id="anxietyInput" placeholder="此刻让你感到最消耗的一件事是什么？写下来，清空大脑缓存..."></textarea>
-            <!-- Step 1 里的按钮修改为 -->
             <button class="btn" onclick="startRitual()">开启重构</button>
         </div>
 
         <div id="step2" class="step">
             <div class="subtitle" style="margin-bottom: 60px;">请深呼吸，点击下方锚点</div>
             <button class="btn shake-btn" id="btnShake" onclick="triggerAI()">开始演算</button>
-            <div id="shakeStatus" style="margin-top: 40px; color: var(--text-secondary); font-size: 15px; display: none;">AI 正在重构你的认知，请稍候...</div>
+            <div id="shakeStatus" style="margin-top: 40px; color: var(--text-secondary); font-size: 15px; display: none;">正在链接深层潜意识...</div>
         </div>
 
         <div id="step3" class="step">
@@ -243,11 +151,7 @@
             <button class="btn" onclick="goToStep(5)">抽取行动指南</button>
         </div>
 
-
-        <!-- Step 5: 行为激活与长期药引 -->
         <div id="step5" class="step">
-            
-            <!-- 👇 海报截图专属容器 -->
             <div id="posterZone" style="width: 100%; padding: 20px; background-color: #F2F2F7; border-radius: 20px;">
                 <div style="text-align: center; margin-bottom: 20px;">
                     <h2 style="font-size: 20px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px;">赛博电子护身符</h2>
@@ -266,29 +170,17 @@
                     <div style="font-style: italic; color: #3A3A3C; padding: 10px 12px; background-color: #F2F2F7; border-radius: 8px; font-size: 14px;" id="bookQuote">"加载中..."</div>
                 </div>
                 
-                <!-- 海报水印，平时隐藏，截图时其实可以直接带上 -->
                 <div style="text-align: center; margin-top: 15px; font-size: 10px; color: #C7C7CC;">© 赛博心理学工坊 生成</div>
             </div>
 
-            <!-- 操作按钮（截图时不会把这些拍进去） -->
             <button class="btn" onclick="generatePoster()" id="btnPoster">保存专属护身符</button>
-            <button class="btn" style="background-color: #E5E5EA; color: #1C1C1E;" onclick="resetApp()">完成，归位</button>
-        </div>
-
-            <div class="card">
-                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; font-weight: 600;">📖 赛博书方 (认知药引)</div>
-                <div style="font-size: 17px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px;" id="bookTitle">《加载中...》</div>
-                <div style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px; line-height: 1.5;" id="bookIntro">加载中...</div>
-                <div style="font-style: italic; color: #3A3A3C; padding: 10px 12px; background-color: #F2F2F7; border-radius: 8px; font-size: 14px;" id="bookQuote">"加载中..."</div>
-            </div>
-
             <button class="btn" style="background-color: #E5E5EA; color: #1C1C1E;" onclick="resetApp()">完成，归位</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 逻辑部分保持完全一致
+    // 1. 模块切换与每日运势
     function switchModule(moduleId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById('tab-' + moduleId).classList.add('active');
@@ -302,25 +194,20 @@
             const data = await response.json();
             document.getElementById('daily-date').innerText = data.date;
             document.getElementById('daily-level').innerText = data.fortune_level;
-            
             document.getElementById('daily-suitable').innerText = data.suitable;
-            // 👇 新增：填充大白话翻译
             document.getElementById('daily-suitable-desc').innerText = data.suitable_desc; 
-            
             document.getElementById('daily-unsuitable').innerText = data.unsuitable;
-            // 👇 新增：填充大白话翻译
             document.getElementById('daily-unsuitable-desc').innerText = data.unsuitable_desc; 
-            
             document.getElementById('daily-quote').innerText = `"${data.daily_quote}"`;
         } catch (error) {
             document.getElementById('daily-quote').innerText = "获取运势失败，请尝试刷新。";
         }
     };
 
+    // 2. 电子求签与预加载逻辑
     let aiResponseData = {};
-    let aiFetchPromise = null; // 用于存储后台预加载的请求
+    let aiFetchPromise = null; 
 
-    // 【新增】Step 1 点击时：跳转页面 + 偷偷发起请求
     function startRitual() {
         const anxietyText = document.getElementById('anxietyInput').value.trim();
         if (!anxietyText) {
@@ -328,10 +215,9 @@
             return;
         }
         
-        // 先让用户进入 Step 2 看动画锚定身心
         goToStep(2);
         
-        // 同时，后台静默发起大模型请求（预加载），并将这个 Promise 存起来
+        // 预加载 AI 数据
         aiFetchPromise = fetch('/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -342,31 +228,24 @@
         });
     }
 
-    // 重构的触发动画与等待逻辑
     async function triggerAI() {
         const btn = document.getElementById('btnShake');
         const status = document.getElementById('shakeStatus');
         
-        // 1. 开始圆形按钮的抖动/发光动画
         btn.disabled = true;
         btn.classList.add('shake-animation');
         status.style.display = 'block';
         status.innerText = "正在链接深层潜意识...";
 
         try {
-            // 2. 依然保留 1.5 秒的最低动画时间，维持玄学仪式感
             const minAnimPromise = new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // 同时等待“预加载的 AI 结果”和“1.5秒”
             const [aiResult] = await Promise.all([aiFetchPromise, minAnimPromise]);
             
-            aiResponseData = aiResult; // 拿到数据
+            aiResponseData = aiResult; 
             
-            // 3. 停止摇晃，平滑过渡到结果页
             btn.classList.remove('shake-animation');
             status.innerText = "签文已出，正在解析...";
             
-            // 停顿 0.5 秒让用户看清状态字样，然后跳到第 3 步
             setTimeout(() => {
                 status.style.display = 'none';
                 btn.disabled = false;
@@ -382,13 +261,56 @@
         }
     }
 
+    function goToStep(stepNum) {
+        document.querySelectorAll('#module-divination .step').forEach(el => el.classList.remove('active'));
+        document.getElementById('step' + stepNum).classList.add('active');
+        
+        if (stepNum === 3 && aiResponseData) {
+            document.getElementById('signTitle').innerText = aiResponseData.sign_title || "【未知】";
+            document.getElementById('cbtText').innerText = aiResponseData.cbt_explanation || "解析失败";
+        } else if (stepNum === 4 && aiResponseData) {
+            document.getElementById('socratesText').innerText = aiResponseData.socratic_question || "解析失败";
+        } else if (stepNum === 5 && aiResponseData) {
+            document.getElementById('actionText').innerText = aiResponseData.action_card || "解析失败";
+            document.getElementById('bookTitle').innerText = `《${aiResponseData.book_title || "心理学百科"}》`;
+            document.getElementById('bookQuote').innerText = `"${aiResponseData.book_quote || "去阅读，去发现。"}"`;
+            document.getElementById('bookIntro').innerText = aiResponseData.book_intro || "一本好书可以治愈灵魂。";
+        }
+    }
+
+    // 3. 海报生成
+    function generatePoster() {
+        const posterNode = document.getElementById('posterZone');
+        const btn = document.getElementById('btnPoster');
+        
+        btn.innerText = "正在生成中...";
+        btn.disabled = true;
+
+        html2canvas(posterNode, {
+            scale: 2, 
+            backgroundColor: '#F2F2F7', 
+            useCORS: true 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `赛博护身符-${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            btn.innerText = "保存专属护身符";
+            btn.disabled = false;
+        }).catch(err => {
+            alert("海报生成失败，请稍后再试。");
+            btn.innerText = "保存专属护身符";
+            btn.disabled = false;
+        });
+    }
+
     function resetApp() {
         document.getElementById('anxietyInput').value = '';
         document.querySelectorAll('#module-divination textarea').forEach(ta => ta.value = '');
         aiResponseData = {};
-        aiFetchPromise = null; // 清空预加载缓存
+        aiFetchPromise = null; 
         
-        // 确保圆圈按钮状态归位
         const btn = document.getElementById('btnShake');
         btn.disabled = false;
         btn.classList.remove('shake-animation');
