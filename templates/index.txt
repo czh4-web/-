@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛博电子护身符</title>
+<style>
+    :root { --bg-color: #121212; --text-primary: #e0e0e0; --text-secondary: #9e9e9e; --accent-color: #8b0000; --card-bg: #1e1e1e; --border-color: #333333; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--bg-color); color: var(--text-primary); font-family: "PingFang SC", sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    
+    /* 顶部导航栏样式 */
+    .nav-tabs { display: flex; width: 100%; max-width: 480px; margin-top: 20px; border-bottom: 1px solid var(--border-color); }
+    .tab-btn { flex: 1; background: none; border: none; color: var(--text-secondary); font-size: 16px; padding: 15px 0; cursor: pointer; transition: 0.3s; }
+    .tab-btn.active { color: var(--accent-color); font-weight: bold; border-bottom: 2px solid var(--accent-color); }
+
+    .container { width: 100%; max-width: 480px; padding: 30px 20px; text-align: center; }
+    
+    /* 模块切换逻辑 */
+    .module { display: none; width: 100%; animation: fadeIn 0.5s ease; }
+    .module.active { display: block; }
+
+    /* 通用样式 */
+    .step { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.8s ease; }
+    .step.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: 2px; color: #fff; }
+    .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 30px; }
+    textarea { width: 100%; height: 120px; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); padding: 15px; font-size: 14px; resize: none; margin-bottom: 20px; }
+    textarea:focus { outline: none; border-color: var(--accent-color); }
+    .btn { background-color: var(--accent-color); color: #fff; border: none; padding: 12px 30px; font-size: 16px; border-radius: 25px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+    .btn:hover { background-color: #a50000; } .btn:disabled { background-color: #555; cursor: not-allowed; }
+    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 20px; margin-bottom: 30px; width: 100%; position: relative; }
+    .content-text { font-size: 15px; line-height: 1.6; text-align: justify; }
+    
+    /* 每日运势专属样式 */
+    .fortune-date { font-size: 18px; color: var(--text-secondary); margin-bottom: 10px; }
+    .fortune-level { font-size: 48px; font-weight: bold; color: var(--accent-color); margin: 20px 0; text-shadow: 0 0 15px rgba(139, 0, 0, 0.5); }
+    .do-dont-box { display: flex; justify-content: space-around; margin: 20px 0; padding: 20px 0; border-top: 1px dashed var(--border-color); border-bottom: 1px dashed var(--border-color); }
+    .do-item { color: #4CAF50; font-weight: bold; font-size: 20px;}
+    .dont-item { color: #F44336; font-weight: bold; font-size: 20px;}
+    .do-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+
+    /* 求签专属样式 */
+    .shake-btn { width: 120px; height: 120px; border-radius: 50%; font-size: 20px; font-weight: bold; background: linear-gradient(145deg, #1e1e1e, #2a2a2a); border: 2px solid var(--accent-color); box-shadow: 0 0 20px rgba(139, 0, 0, 0.3); }
+    .shake-animation { animation: shake 0.5s infinite; }
+    @keyframes shake { 0% { transform: translate(1px, 1px) } 25% { transform: translate(-1px, -2px) } 50% { transform: translate(-3px, 0px) } 75% { transform: translate(2px, 2px) } 100% { transform: translate(1px, -1px) } }
+    .sign-title { font-size: 28px; font-weight: bold; color: var(--accent-color); margin-bottom: 20px; letter-spacing: 5px; text-align: center; }
+    .action-card { border: 2px dashed var(--accent-color); background-color: rgba(139, 0, 0, 0.05); }
+</style>
+</head>
+<body>
+
+<div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchModule('daily')" id="tab-daily">每日运势</button>
+    <button class="tab-btn" onclick="switchModule('divination')" id="tab-divination">电子求签</button>
+</div>
+
+<div class="container">
+    
+    <div id="module-daily" class="module active">
+        <div class="card" style="text-align: center;">
+            <div class="fortune-date" id="daily-date">计算中...</div>
+            <div class="subtitle">赛博神经元今日状态解析</div>
+            
+            <div class="fortune-level" id="daily-level">--</div>
+            
+            <div class="do-dont-box">
+                <div>
+                    <div class="do-label">宜</div>
+                    <div class="do-item" id="daily-suitable">--</div>
+                </div>
+                <div>
+                    <div class="do-label">忌</div>
+                    <div class="dont-item" id="daily-unsuitable">--</div>
+                </div>
+            </div>
+            
+            <div class="content-text" id="daily-quote" style="text-align: center; color: var(--text-secondary); font-style: italic;">
+                "正在链接大模型获取今日心理护盾..."
+            </div>
+        </div>
+    </div>
+
+    <div id="module-divination" class="module">
+        <div id="step1" class="step active">
+            <h1>深度心理除颤</h1>
+            <div class="subtitle">遇到具体的困境？交给我来重构认知</div>
+            <textarea id="anxietyInput" placeholder="此刻让你感到最消耗的一件事是什么？..."></textarea>
+            <button class="btn" onclick="goToStep(2)">开启仪式</button>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="subtitle" style="margin-bottom: 60px;">请深呼吸，集中意念</div>
+            <button class="btn shake-btn" id="btnShake" onclick="triggerAI()">点击摇签</button>
+            <div id="shakeStatus" style="margin-top: 30px; color: var(--text-secondary); display: none;">AI 正在重构你的认知，请稍候...</div>
+        </div>
+
+        <div id="step3" class="step">
+            <div class="subtitle">第一境：破除虚妄</div>
+            <div class="sign-title" id="signTitle">加载中</div>
+            <div class="card">
+                <div class="content-text" id="cbtText">解读中...</div>
+            </div>
+            <button class="btn" onclick="goToStep(4)">下一步：审视</button>
+        </div>
+
+        <div id="step4" class="step">
+            <div class="subtitle">第二境：向内叩问</div>
+            <div class="card">
+                <div class="content-text" id="socratesText" style="font-weight: bold; margin-bottom: 15px;">加载中...</div>
+                <textarea placeholder="(可选) 写下你的觉察，或在心中默念答案..."></textarea>
+            </div>
+            <button class="btn" onclick="goToStep(5)">抽取行动卡</button>
+        </div>
+
+        <div id="step5" class="step">
+            <div class="subtitle">第三境：回归真实</div>
+            <div class="card action-card">
+                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">您当下的微行动指引：</div>
+                <div class="content-text" id="actionText" style="font-size: 18px; font-weight: bold; text-align: center; color: #fff;">加载中...</div>
+            </div>
+            <button class="btn" style="background-color: #333; margin-top: 20px;" onclick="resetApp()">已完成，归位</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ================= 模块切换与初始化逻辑 =================
+    function switchModule(moduleId) {
+        // 切换导航栏高亮
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + moduleId).classList.add('active');
+        
+        // 切换内容区域
+        document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
+        document.getElementById('module-' + moduleId).classList.add('active');
+    }
+
+    // 页面加载时自动获取每日运势
+    window.onload = async function() {
+        try {
+            const response = await fetch('/api/daily');
+            const data = await response.json();
+            
+            document.getElementById('daily-date').innerText = data.date;
+            document.getElementById('daily-level').innerText = data.fortune_level;
+            document.getElementById('daily-suitable').innerText = data.suitable;
+            document.getElementById('daily-unsuitable').innerText = data.unsuitable;
+            document.getElementById('daily-quote').innerText = `"${data.daily_quote}"`;
+        } catch (error) {
+            document.getElementById('daily-quote').innerText = "获取运势失败，请尝试刷新。";
+        }
+    };
+
+    // ================= 电子求签逻辑（与之前一致） =================
+    let aiResponseData = {};
+
+    function goToStep(stepNum) {
+        if (stepNum === 2) {
+            const input = document.getElementById('anxietyInput').value.trim();
+            if (!input) {
+                alert("请先倾诉让你消耗的小事。");
+                return;
+            }
+        }
+        document.querySelectorAll('#module-divination .step').forEach(el => el.classList.remove('active'));
+        document.getElementById('step' + stepNum).classList.add('active');
+        
+        if (stepNum === 3 && aiResponseData) {
+            document.getElementById('signTitle').innerText = aiResponseData.sign_title || "【未知】";
+            document.getElementById('cbtText').innerText = aiResponseData.cbt_explanation || "解析失败";
+        } else if (stepNum === 4 && aiResponseData) {
+            document.getElementById('socratesText').innerText = aiResponseData.socratic_question || "解析失败";
+        } else if (stepNum === 5 && aiResponseData) {
+            document.getElementById('actionText').innerText = aiResponseData.action_card || "解析失败";
+        }
+    }
+
+    async function triggerAI() {
+        const btn = document.getElementById('btnShake');
+        const status = document.getElementById('shakeStatus');
+        const anxietyText = document.getElementById('anxietyInput').value;
+        
+        btn.disabled = true;
+        btn.classList.add('shake-animation');
+        status.style.display = 'block';
+
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ anxiety: anxietyText })
+            });
+            
+            if (!response.ok) throw new Error('网络请求失败');
+            aiResponseData = await response.json();
+            
+            btn.classList.remove('shake-animation');
+            btn.disabled = false;
+            status.style.display = 'none';
+            goToStep(3);
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert("赛博神经元连接失败，请检查终端配置。");
+            btn.classList.remove('shake-animation');
+            btn.disabled = false;
+            status.style.display = 'none';
+        }
+    }
+
+    function resetApp() {
+        document.getElementById('anxietyInput').value = '';
+        document.querySelectorAll('#module-divination textarea').forEach(ta => ta.value = '');
+        aiResponseData = {};
+        goToStep(1);
+    }
+</script>
+</body>
+</html>
