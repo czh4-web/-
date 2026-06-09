@@ -187,13 +187,16 @@
             <div class="fortune-level" id="daily-level">--</div>
             
             <div class="do-dont-box">
-                <div>
+                <div style="flex: 1; padding: 0 10px;">
                     <div class="do-label">宜</div>
                     <div class="do-item" id="daily-suitable">--</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;" id="daily-suitable-desc">--</div>
                 </div>
-                <div>
+                
+                <div style="width: 1px; background-color: #E5E5EA; margin: 0 10px;"></div> <div style="flex: 1; padding: 0 10px;">
                     <div class="do-label">忌</div>
                     <div class="dont-item" id="daily-unsuitable">--</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;" id="daily-unsuitable-desc">--</div>
                 </div>
             </div>
             
@@ -272,8 +275,15 @@
             const data = await response.json();
             document.getElementById('daily-date').innerText = data.date;
             document.getElementById('daily-level').innerText = data.fortune_level;
+            
             document.getElementById('daily-suitable').innerText = data.suitable;
+            // 👇 新增：填充大白话翻译
+            document.getElementById('daily-suitable-desc').innerText = data.suitable_desc; 
+            
             document.getElementById('daily-unsuitable').innerText = data.unsuitable;
+            // 👇 新增：填充大白话翻译
+            document.getElementById('daily-unsuitable-desc').innerText = data.unsuitable_desc; 
+            
             document.getElementById('daily-quote').innerText = `"${data.daily_quote}"`;
         } catch (error) {
             document.getElementById('daily-quote').innerText = "获取运势失败，请尝试刷新。";
