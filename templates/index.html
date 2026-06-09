@@ -2,66 +2,179 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>赛博电子护身符</title>
 <style>
-    :root { --bg-color: #121212; --text-primary: #e0e0e0; --text-secondary: #9e9e9e; --accent-color: #8b0000; --card-bg: #1e1e1e; --border-color: #333333; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: var(--bg-color); color: var(--text-primary); font-family: "PingFang SC", sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    /* iOS Light Mode Color Palette */
+    :root { 
+        --bg-color: #F2F2F7; /* iOS系统分组背景色 */
+        --card-bg: #FFFFFF; 
+        --text-primary: #1C1C1E; /* iOS主要文本 */
+        --text-secondary: #8E8E93; /* iOS次要文本 */
+        --accent-color: #D70015; /* 提亮后的古典红，适配白底 */
+        --border-color: #E5E5EA; 
+        --shadow-color: rgba(0, 0, 0, 0.06);
+    }
     
-    /* 顶部导航栏样式 */
-    .nav-tabs { display: flex; width: 100%; max-width: 480px; margin-top: 20px; border-bottom: 1px solid var(--border-color); }
-    .tab-btn { flex: 1; background: none; border: none; color: var(--text-secondary); font-size: 16px; padding: 15px 0; cursor: pointer; transition: 0.3s; }
-    .tab-btn.active { color: var(--accent-color); font-weight: bold; border-bottom: 2px solid var(--accent-color); }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
+    body { 
+        background-color: var(--bg-color); 
+        color: var(--text-primary); 
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        min-height: 100vh; 
+    }
+    
+    /* iOS Segmented Control (顶部导航) */
+    .nav-tabs { 
+        display: flex; 
+        width: calc(100% - 32px); 
+        max-width: 440px; 
+        margin: 20px auto; 
+        background-color: #E3E3E8; 
+        border-radius: 9px; 
+        padding: 2px;
+    }
+    .tab-btn { 
+        flex: 1; 
+        background: none; 
+        border: none; 
+        color: #1C1C1E; 
+        font-size: 14px; 
+        font-weight: 500;
+        padding: 6px 0; 
+        border-radius: 7px;
+        cursor: pointer; 
+        transition: all 0.2s ease; 
+    }
+    .tab-btn.active { 
+        background-color: #FFFFFF; 
+        font-weight: 600; 
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); 
+    }
 
-    .container { width: 100%; max-width: 480px; padding: 30px 20px; text-align: center; }
+    .container { width: 100%; max-width: 480px; padding: 10px 20px 40px; text-align: center; }
     
-    /* 模块切换逻辑 */
-    .module { display: none; width: 100%; animation: fadeIn 0.5s ease; }
+    .module { display: none; width: 100%; animation: fadeIn 0.4s ease; }
     .module.active { display: block; }
-
-    /* 通用样式 */
-    .step { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.8s ease; }
+    .step { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease; }
     .step.active { display: flex; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: 2px; color: #fff; }
-    .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 30px; }
-    textarea { width: 100%; height: 120px; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); padding: 15px; font-size: 14px; resize: none; margin-bottom: 20px; }
-    textarea:focus { outline: none; border-color: var(--accent-color); }
-    .btn { background-color: var(--accent-color); color: #fff; border: none; padding: 12px 30px; font-size: 16px; border-radius: 25px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-    .btn:hover { background-color: #a50000; } .btn:disabled { background-color: #555; cursor: not-allowed; }
-    .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 20px; margin-bottom: 30px; width: 100%; position: relative; }
-    .content-text { font-size: 15px; line-height: 1.6; text-align: justify; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    
+    h1 { font-size: 28px; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
+    .subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; font-weight: 400; }
+    
+    /* iOS 输入框 */
+    textarea { 
+        width: 100%; 
+        height: 140px; 
+        background-color: #F2F2F7; 
+        border: 1px solid transparent; 
+        border-radius: 16px; 
+        color: var(--text-primary); 
+        padding: 16px; 
+        font-size: 16px; /* 16px可防止iOS自动放大 */
+        line-height: 1.5;
+        resize: none; 
+        margin-bottom: 24px; 
+        transition: all 0.3s; 
+    }
+    textarea:focus { 
+        outline: none; 
+        background-color: #FFFFFF;
+        border-color: rgba(215, 0, 21, 0.3);
+        box-shadow: 0 0 0 4px rgba(215, 0, 21, 0.1); 
+    }
+    
+    /* iOS 大圆角按钮 */
+    .btn { 
+        width: 100%;
+        background-color: var(--accent-color); 
+        color: #fff; 
+        border: none; 
+        padding: 14px 0; 
+        font-size: 17px; 
+        font-weight: 600;
+        border-radius: 14px; 
+        cursor: pointer; 
+        transition: 0.2s; 
+        margin-top: 10px; 
+    }
+    .btn:hover { background-color: #b50012; } 
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { background-color: #D1D1D6; color: #FFFFFF; cursor: not-allowed; }
+    
+    /* iOS 弥散阴影卡片 */
+    .card { 
+        background-color: var(--card-bg); 
+        border-radius: 20px; 
+        padding: 24px; 
+        margin-bottom: 24px; 
+        width: 100%; 
+        position: relative; 
+        box-shadow: 0 4px 24px var(--shadow-color);
+        text-align: left;
+    }
+    
+    .content-text { font-size: 16px; line-height: 1.6; color: #3A3A3C; }
     
     /* 每日运势专属样式 */
-    .fortune-date { font-size: 18px; color: var(--text-secondary); margin-bottom: 10px; }
-    .fortune-level { font-size: 48px; font-weight: bold; color: var(--accent-color); margin: 20px 0; text-shadow: 0 0 15px rgba(139, 0, 0, 0.5); }
-    .do-dont-box { display: flex; justify-content: space-around; margin: 20px 0; padding: 20px 0; border-top: 1px dashed var(--border-color); border-bottom: 1px dashed var(--border-color); }
-    .do-item { color: #4CAF50; font-weight: bold; font-size: 20px;}
-    .dont-item { color: #F44336; font-weight: bold; font-size: 20px;}
-    .do-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+    .fortune-date { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; text-align: center; }
+    .fortune-level { font-size: 56px; font-weight: 800; color: var(--accent-color); margin: 10px 0 20px; text-align: center; }
+    .do-dont-box { 
+        display: flex; 
+        justify-content: space-around; 
+        margin: 20px 0; 
+        padding: 20px 0; 
+        background-color: #F9F9FB;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .do-item { color: #34C759; font-weight: 600; font-size: 18px;}
+    .dont-item { color: #FF3B30; font-weight: 600; font-size: 18px;}
+    .do-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
 
-    /* 求签专属样式 */
-    .shake-btn { width: 120px; height: 120px; border-radius: 50%; font-size: 20px; font-weight: bold; background: linear-gradient(145deg, #1e1e1e, #2a2a2a); border: 2px solid var(--accent-color); box-shadow: 0 0 20px rgba(139, 0, 0, 0.3); }
+    /* 求签摇一摇专属按钮 */
+    .shake-btn { 
+        width: 140px; 
+        height: 140px; 
+        border-radius: 50%; 
+        font-size: 22px; 
+        font-weight: 700; 
+        background: #FFFFFF; 
+        color: var(--accent-color);
+        box-shadow: 0 8px 30px rgba(215, 0, 21, 0.15);
+        margin: 0 auto;
+        display: block;
+    }
     .shake-animation { animation: shake 0.5s infinite; }
-    @keyframes shake { 0% { transform: translate(1px, 1px) } 25% { transform: translate(-1px, -2px) } 50% { transform: translate(-3px, 0px) } 75% { transform: translate(2px, 2px) } 100% { transform: translate(1px, -1px) } }
-    .sign-title { font-size: 28px; font-weight: bold; color: var(--accent-color); margin-bottom: 20px; letter-spacing: 5px; text-align: center; }
-    .action-card { border: 2px dashed var(--accent-color); background-color: rgba(139, 0, 0, 0.05); }
+    @keyframes shake { 
+        0% { transform: translate(1px, 1px) rotate(0deg); } 
+        25% { transform: translate(-1px, -2px) rotate(-1deg); } 
+        50% { transform: translate(-3px, 0px) rotate(1deg); } 
+        75% { transform: translate(2px, 2px) rotate(-1deg); } 
+        100% { transform: translate(1px, -1px) rotate(0deg); } 
+    }
+    .sign-title { font-size: 26px; font-weight: 800; color: var(--accent-color); margin-bottom: 24px; letter-spacing: 2px; text-align: center; }
 </style>
 </head>
 <body>
 
 <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchModule('daily')" id="tab-daily">每日运势</button>
-    <button class="tab-btn" onclick="switchModule('divination')" id="tab-divination">电子求签</button>
+    <button class="tab-btn" onclick="switchModule('divination')" id="tab-divination">心理除颤</button>
 </div>
 
 <div class="container">
     
     <div id="module-daily" class="module active">
-        <div class="card" style="text-align: center;">
+        <div class="card">
             <div class="fortune-date" id="daily-date">计算中...</div>
-            <div class="subtitle">赛博神经元今日状态解析</div>
+            <div class="subtitle" style="text-align: center; margin-bottom: 10px;">今日赛博心理状态指南</div>
             
             <div class="fortune-level" id="daily-level">--</div>
             
@@ -76,7 +189,7 @@
                 </div>
             </div>
             
-            <div class="content-text" id="daily-quote" style="text-align: center; color: var(--text-secondary); font-style: italic;">
+            <div class="content-text" id="daily-quote" style="text-align: center; font-style: normal; font-weight: 500; font-size: 15px;">
                 "正在链接大模型获取今日心理护盾..."
             </div>
         </div>
@@ -86,73 +199,69 @@
         <div id="step1" class="step active">
             <h1>深度心理除颤</h1>
             <div class="subtitle">遇到具体的困境？交给我来重构认知</div>
-            <textarea id="anxietyInput" placeholder="此刻让你感到最消耗的一件事是什么？..."></textarea>
-            <button class="btn" onclick="goToStep(2)">开启仪式</button>
+            <textarea id="anxietyInput" placeholder="此刻让你感到最消耗的一件事是什么？写下来，清空大脑缓存..."></textarea>
+            <button class="btn" onclick="goToStep(2)">开启重构</button>
         </div>
 
         <div id="step2" class="step">
-            <div class="subtitle" style="margin-bottom: 60px;">请深呼吸，集中意念</div>
-            <button class="btn shake-btn" id="btnShake" onclick="triggerAI()">点击摇签</button>
-            <div id="shakeStatus" style="margin-top: 30px; color: var(--text-secondary); display: none;">AI 正在重构你的认知，请稍候...</div>
+            <div class="subtitle" style="margin-bottom: 60px;">请深呼吸，点击下方锚点</div>
+            <button class="btn shake-btn" id="btnShake" onclick="triggerAI()">开始演算</button>
+            <div id="shakeStatus" style="margin-top: 40px; color: var(--text-secondary); font-size: 15px; display: none;">AI 正在重构你的认知，请稍候...</div>
         </div>
 
         <div id="step3" class="step">
-            <div class="subtitle">第一步：破除虚妄</div>
+            <div class="subtitle">第一境：破除虚妄</div>
             <div class="sign-title" id="signTitle">加载中</div>
             <div class="card">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">现代释义 (CBT)</div>
                 <div class="content-text" id="cbtText">解读中...</div>
             </div>
-            <button class="btn" onclick="goToStep(4)">下一步：审视</button>
+            <button class="btn" onclick="goToStep(4)">进入审视</button>
         </div>
 
         <div id="step4" class="step">
-            <div class="subtitle">第二步：向内叩问</div>
+            <div class="subtitle">第二境：向内叩问</div>
             <div class="card">
-                <div class="content-text" id="socratesText" style="font-weight: bold; margin-bottom: 15px;">加载中...</div>
-                <textarea placeholder="(可选) 写下你的觉察，或在心中默念答案..."></textarea>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">苏格拉底式提问</div>
+                <div class="content-text" id="socratesText" style="font-weight: 600; margin-bottom: 16px; font-size: 17px; color: #1C1C1E;">加载中...</div>
+                <textarea placeholder="(可选) 写下你的觉察，或在心中默念答案..." style="height: 100px; margin-bottom: 0; background-color: #F9F9FB;"></textarea>
             </div>
-            <button class="btn" onclick="goToStep(5)">抽取行动卡</button>
+            <button class="btn" onclick="goToStep(5)">抽取行动指南</button>
         </div>
 
         <div id="step5" class="step">
-            <div class="subtitle">第三步：回归真实</div>
+            <div class="subtitle">第三境：回归真实</div>
             
-            <div class="card action-card" style="margin-bottom: 20px;">
-                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">🎯 您当下的微行动指引：</div>
-                <div class="content-text" id="actionText" style="font-size: 18px; font-weight: bold; text-align: center; color: #fff;">加载中...</div>
+            <div class="card" style="background-color: #FDF2F3;">
+                <div style="font-size: 13px; color: var(--accent-color); margin-bottom: 12px; font-weight: 600;">🎯 物理微行动指引</div>
+                <div class="content-text" id="actionText" style="font-size: 18px; font-weight: 700; color: var(--accent-color);">加载中...</div>
             </div>
 
-            <div class="card" style="border-top: 3px solid var(--text-secondary);">
-                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">📖 赛博书方：</div>
-                <div style="font-size: 18px; font-weight: bold; color: var(--accent-color); margin-bottom: 10px;" id="bookTitle">《加载中...》</div>
-                <div style="font-style: italic; color: #bbb; margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--accent-color);" id="bookQuote">"加载中..."</div>
-                <div class="content-text" id="bookIntro" style="font-size: 13px; color: var(--text-secondary);">加载中...</div>
+            <div class="card">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; font-weight: 600;">📖 赛博书方 (认知药引)</div>
+                <div style="font-size: 17px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px;" id="bookTitle">《加载中...》</div>
+                <div style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px; line-height: 1.5;" id="bookIntro">加载中...</div>
+                <div style="font-style: italic; color: #3A3A3C; padding: 10px 12px; background-color: #F2F2F7; border-radius: 8px; font-size: 14px;" id="bookQuote">"加载中..."</div>
             </div>
 
-            <button class="btn" style="background-color: #333; margin-top: 20px;" onclick="resetApp()">已完成，归位</button>
+            <button class="btn" style="background-color: #E5E5EA; color: #1C1C1E;" onclick="resetApp()">完成，归位</button>
         </div>
     </div>
-
 </div>
 
 <script>
-    // ================= 模块切换与初始化逻辑 =================
+    // 逻辑部分保持完全一致
     function switchModule(moduleId) {
-        // 切换导航栏高亮
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById('tab-' + moduleId).classList.add('active');
-        
-        // 切换内容区域
         document.querySelectorAll('.module').forEach(mod => mod.classList.remove('active'));
         document.getElementById('module-' + moduleId).classList.add('active');
     }
 
-    // 页面加载时自动获取每日运势
     window.onload = async function() {
         try {
             const response = await fetch('/api/daily');
             const data = await response.json();
-            
             document.getElementById('daily-date').innerText = data.date;
             document.getElementById('daily-level').innerText = data.fortune_level;
             document.getElementById('daily-suitable').innerText = data.suitable;
@@ -163,14 +272,13 @@
         }
     };
 
-    // ================= 电子求签逻辑（与之前一致） =================
     let aiResponseData = {};
 
     function goToStep(stepNum) {
         if (stepNum === 2) {
             const input = document.getElementById('anxietyInput').value.trim();
             if (!input) {
-                alert("请先倾诉让你消耗的小事。");
+                alert("请先写下让你消耗的事物。");
                 return;
             }
         }
@@ -184,8 +292,6 @@
             document.getElementById('socratesText').innerText = aiResponseData.socratic_question || "解析失败";
         } else if (stepNum === 5 && aiResponseData) {
             document.getElementById('actionText').innerText = aiResponseData.action_card || "解析失败";
-            
-            // 新增：填充书籍数据
             document.getElementById('bookTitle').innerText = `《${aiResponseData.book_title || "心理学百科"}》`;
             document.getElementById('bookQuote').innerText = `"${aiResponseData.book_quote || "去阅读，去发现。"}"`;
             document.getElementById('bookIntro').innerText = aiResponseData.book_intro || "一本好书可以治愈灵魂。";
@@ -215,10 +321,9 @@
             btn.disabled = false;
             status.style.display = 'none';
             goToStep(3);
-
         } catch (error) {
             console.error('Error:', error);
-            alert("赛博神经元连接失败，请检查终端配置。");
+            alert("神经元连接失败，请检查网络。");
             btn.classList.remove('shake-animation');
             btn.disabled = false;
             status.style.display = 'none';
