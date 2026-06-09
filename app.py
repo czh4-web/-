@@ -27,34 +27,54 @@ SIGN_TITLES = ['【见山】', '【破浪】', '【驻足】', '【拨云】', '
 def index():
     return render_template('index.html')
 
-# ================= 新增：每日运势接口 =================
+# ================= 优化后：每日运势接口 =================
 @app.route('/api/daily', methods=['GET'])
 def generate_daily_fortune():
-    # 获取当天的日期作为时间锚点
     today_str = datetime.datetime.now().strftime("%Y年%m月%d日")
     
-    system_prompt = """
-    你是一个深谙现代认知行为疗法（CBT）的赛博心理容器。
+    # 【新增功能】：建立心理学流派/理论的随机种子库
+    PSYCH_DOMAINS = [
+        "认知行为疗法（CBT）与情绪调节",
+        "社会认知职业理论（SCCT）与生涯规划",
+        "阿德勒目的论与个体心理学",
+        "积极心理学与心流体验",
+        "学习心理学与学业动机",
+        "人本主义与自我实现",
+        "精神分析与潜意识防御机制",
+        "正念与接纳承诺疗法（ACT）"
+    ]
+    # 每次请求随机选择一个理论框架作为锚点
+    current_domain = random.choice(PSYCH_DOMAINS)
+    
+    system_prompt = f"""
+    你是一个深谙心理学的赛博电子容器。
     请生成一份今天的“赛博电子运势”。要求完全使用 JSON 格式输出，包含以下键：
     "fortune_level": 运势等级，从 [大吉, 中吉, 小吉, 平] 中选一个（不要写凶，保护用户心理）。
-    "suitable": 宜做的事，用四个字的心理学术语，如"课题分离", "正念冥想", "接纳不完美", "允许停顿"。
-    "unsuitable": 忌做的事，用四个字的心理学术语，如"灾难化预期", "精神内耗", "反刍思维", "过度控制"。
-    "daily_quote": 一句结合今天运势的、有洞察力的心理学金句（40字左右）。
+    "suitable": 宜做的事，用四个字的高级心理学术语。
+    "unsuitable": 忌做的事，用四个字的高级心理学术语。
+    "daily_quote": 一句有洞察力的心理学金句（40字左右）。
+
+    【核心约束规则】：
+    1. 理论限定：你必须严格基于【{current_domain}】的理论框架来提取术语和撰写金句。
+    2. 禁止重复：绝对不要使用“课题分离”、“正念冥想”、“灾难化预期”、“精神内耗”这些烂大街的词汇。请挖掘该理论框架下更专业、更具学术美感的冷门词汇（如：效能激活、客体恒常、自我图式、认知卸载等）。
     """
-    
     
     try:
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"今天是{today_str}，请生成今天的运势。"}
+                {"role": "user", "content": f"今天是{today_str}，请基于指定的心理学框架，生成今天的运势。"}
             ],
             response_format={"type": "json_object"},
-            temperature=0.8
+            temperature=0.9  # 【关键修改】：将温度调高到0.9，进一步激发大模型的创造力和词汇多样性
         )
         result = json.loads(response.choices[0].message.content)
         result['date'] = today_str
+        
+        # 可以在控制台打印出当前抽中的理论，方便你在后台监控
+        print(f"今日运势生成框架: {current_domain}") 
+        
         return jsonify(result)
     except Exception as e:
         print(f"Daily API Error: {e}")
