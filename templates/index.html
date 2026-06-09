@@ -169,74 +169,6 @@
     }
     .sign-title { font-size: 26px; font-weight: 800; color: var(--accent-color); margin-bottom: 24px; letter-spacing: 2px; text-align: center; }
 
-    /* ================= 纯 CSS 绘制签筒与动画 ================= */
-    #bambooContainer {
-        display: none; /* 默认隐藏 */
-        position: relative;
-        width: 120px;
-        height: 160px;
-        margin: 0 auto;
-    }
-    
-    /* 飞出的竹签 */
-    .bamboo-stick {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        margin-left: -4px;
-        width: 8px;
-        height: 90px;
-        background: linear-gradient(to bottom, #F5DEB3, #DEB887); /* 竹子原色 */
-        border-radius: 4px;
-        z-index: 1;
-        opacity: 0;
-    }
-    
-    /* 签筒主体 */
-    .cylinder {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 64px;
-        height: 110px;
-        background: linear-gradient(to right, #8b0000, #b50012, #8b0000); /* 经典国风红筒 */
-        border-radius: 6px 6px 16px 16px;
-        z-index: 2;
-        box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 10px 20px rgba(215, 0, 21, 0.2);
-    }
-    
-    /* 签筒的开口 */
-    .cylinder::before { 
-        content: '';
-        position: absolute;
-        top: -8px;
-        left: -2px;
-        width: 68px;
-        height: 16px;
-        background: #3b0000; /* 筒内深色 */
-        border-radius: 50%;
-        border: 2px solid #8b0000;
-    }
-
-    /* 摇晃动画 */
-    .shake-cylinder {
-        animation: shake-action 0.2s infinite alternate;
-    }
-    @keyframes shake-action {
-        0% { transform: translateX(-50%) rotate(-6deg); }
-        100% { transform: translateX(-50%) rotate(6deg); }
-    }
-
-    /* 竹签飞出动画 */
-    .stick-fly {
-        animation: stick-fly-action 1s forwards ease-out;
-    }
-    @keyframes stick-fly-action {
-        0% { transform: translateY(0); opacity: 1; }
-        40% { transform: translateY(-70px); opacity: 1; }
-        100% { transform: translateY(-120px) rotate(15deg); opacity: 0; }
-    }
 </style>
 </head>
 <body>
@@ -307,14 +239,6 @@
                 <textarea placeholder="(可选) 写下你的觉察，或在心中默念答案..." style="height: 100px; margin-bottom: 0; background-color: #F9F9FB;"></textarea>
             </div>
             <button class="btn" onclick="goToStep(5)">抽取行动指南</button>
-            <!-- 👇 新增：隐藏的签筒动画容器 -->
-            <div id="bambooContainer">
-                <div class="bamboo-stick" id="flyingStick"></div>
-                <div class="cylinder" id="cylinderBody"></div>
-            </div>
-
-            <div id="shakeStatus" style="margin-top: 40px; color: var(--text-secondary); font-size: 15px; display: none;">AI 正在重构你的认知，请稍候...</div>
-        </div>
         </div>
 
         <div id="step5" class="step">
@@ -398,18 +322,11 @@
         const status = document.getElementById('shakeStatus');
         const anxietyText = document.getElementById('anxietyInput').value;
         
-        const bamboo = document.getElementById('bambooContainer');
-        const cylinder = document.getElementById('cylinderBody');
-        const stick = document.getElementById('flyingStick');
-        
-        // 1. 隐藏原按钮，显示签筒，并开始摇晃
-        btn.style.display = 'none';
-        bamboo.style.display = 'block';
-        cylinder.classList.add('shake-cylinder');
+        btn.disabled = true;
+        btn.classList.add('shake-animation');
         status.style.display = 'block';
 
         try {
-            // 后台静默请求 AI 大模型
             const response = await fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -419,25 +336,15 @@
             if (!response.ok) throw new Error('网络请求失败');
             aiResponseData = await response.json();
             
-            // 2. AI 思考完毕：停止摇晃，弹出竹签！
-            cylinder.classList.remove('shake-cylinder');
-            stick.classList.add('stick-fly');
-            status.innerText = "签文已出，正在解析...";
-            
-            // 3. 等待竹签飞出动画播放完（1.2秒），再跳转到下一步
-            setTimeout(() => {
-                status.style.display = 'none';
-                status.innerText = "AI 正在重构你的认知，请稍候..."; // 恢复文字备用
-                goToStep(3);
-            }, 1200);
-
+            btn.classList.remove('shake-animation');
+            btn.disabled = false;
+            status.style.display = 'none';
+            goToStep(3);
         } catch (error) {
             console.error('Error:', error);
             alert("神经元连接失败，请检查网络。");
-            // 发生错误时，恢复成原来的按钮
-            bamboo.style.display = 'none';
-            btn.style.display = 'block';
-            cylinder.classList.remove('shake-cylinder');
+            btn.classList.remove('shake-animation');
+            btn.disabled = false;
             status.style.display = 'none';
         }
     }
@@ -446,11 +353,6 @@
         document.getElementById('anxietyInput').value = '';
         document.querySelectorAll('#module-divination textarea').forEach(ta => ta.value = '');
         aiResponseData = {};
-        
-        // 👇 归位时，必须把签筒藏起来，把原按钮重新放出来
-        document.getElementById('bambooContainer').style.display = 'none';
-        document.getElementById('btnShake').style.display = 'block';
-        document.getElementById('flyingStick').classList.remove('stick-fly');
         
         goToStep(1);
     }
