@@ -42,6 +42,7 @@ def generate_daily_fortune():
     "daily_quote": 一句结合今天运势的、有洞察力的心理学金句（40字左右）。
     """
     
+    
     try:
         response = client.chat.completions.create(
             model="deepseek-chat",
@@ -72,7 +73,7 @@ def generate_counseling():
 
     system_prompt = """
     你现在是一个深谙传统文化与现代认知行为疗法（CBT）的“赛博心理容器”。
-    请严格以 JSON 格式输出，包含以下三个键："cbt_explanation", "socratic_question", "action_card"。
+    请严格以 JSON 格式输出，必须包含以下六个键："cbt_explanation", "socratic_question", "action_card", "book_title", "book_quote", "book_intro"。
     """
     user_prompt = f"""
     用户的烦恼：{user_anxiety}
@@ -82,6 +83,9 @@ def generate_counseling():
     1. "cbt_explanation": 用 CBT 理论给出现代解释。客观、有洞察力，约80字。
     2. "socratic_question": 提出一个直击本质的反思问题，引导区分“可控与不可控”。
     3. "action_card": 给出一个立刻可以执行的微小动作（Small Wins），20字以内。
+    4. "book_title": 推荐一本能解决该用户具体焦虑的心理学/哲学经典书籍（如《被讨厌的勇气》《非暴力沟通》《活出意义来》等，不要带书名号）。
+    5. "book_quote": 提取书中与用户当下困境最契合的一句经典原话。
+    6. "book_intro": 简述这本书的核心理念，以及为什么它能解开用户当下的心结（约60字）。
     """
 
     try:
