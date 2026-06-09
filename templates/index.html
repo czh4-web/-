@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>赛博电子护身符</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
     /* iOS Light Mode Color Palette */
     :root { 
@@ -212,7 +213,8 @@
             <h1>深度心理除颤</h1>
             <div class="subtitle">遇到具体的困境？交给我来重构认知</div>
             <textarea id="anxietyInput" placeholder="此刻让你感到最消耗的一件事是什么？写下来，清空大脑缓存..."></textarea>
-            <button class="btn" onclick="goToStep(2)">开启重构</button>
+            <!-- Step 1 里的按钮修改为 -->
+            <button class="btn" onclick="startRitual()">开启重构</button>
         </div>
 
         <div id="step2" class="step">
@@ -241,13 +243,37 @@
             <button class="btn" onclick="goToStep(5)">抽取行动指南</button>
         </div>
 
+
+        <!-- Step 5: 行为激活与长期药引 -->
         <div id="step5" class="step">
-            <div class="subtitle">第三步：回归真实</div>
             
-            <div class="card" style="background-color: #FDF2F3;">
-                <div style="font-size: 13px; color: var(--accent-color); margin-bottom: 12px; font-weight: 600;">🎯 物理微行动指引</div>
-                <div class="content-text" id="actionText" style="font-size: 18px; font-weight: 700; color: var(--accent-color);">加载中...</div>
+            <!-- 👇 海报截图专属容器 -->
+            <div id="posterZone" style="width: 100%; padding: 20px; background-color: #F2F2F7; border-radius: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2 style="font-size: 20px; color: var(--accent-color); font-weight: 800; letter-spacing: 2px;">赛博电子护身符</h2>
+                    <div style="font-size: 12px; color: var(--text-secondary);">今日认知药引</div>
+                </div>
+
+                <div class="card" style="background-color: #FDF2F3; margin-bottom: 16px;">
+                    <div style="font-size: 13px; color: var(--accent-color); margin-bottom: 12px; font-weight: 600;">🎯 物理微行动指引</div>
+                    <div class="content-text" id="actionText" style="font-size: 18px; font-weight: 700; color: var(--accent-color);">加载中...</div>
+                </div>
+
+                <div class="card" style="margin-bottom: 0;">
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; font-weight: 600;">📖 赛博书方</div>
+                    <div style="font-size: 17px; font-weight: 700; color: #1C1C1E; margin-bottom: 6px;" id="bookTitle">《加载中...》</div>
+                    <div style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px; line-height: 1.5;" id="bookIntro">加载中...</div>
+                    <div style="font-style: italic; color: #3A3A3C; padding: 10px 12px; background-color: #F2F2F7; border-radius: 8px; font-size: 14px;" id="bookQuote">"加载中..."</div>
+                </div>
+                
+                <!-- 海报水印，平时隐藏，截图时其实可以直接带上 -->
+                <div style="text-align: center; margin-top: 15px; font-size: 10px; color: #C7C7CC;">© 赛博心理学工坊 生成</div>
             </div>
+
+            <!-- 操作按钮（截图时不会把这些拍进去） -->
+            <button class="btn" onclick="generatePoster()" id="btnPoster">保存专属护身符</button>
+            <button class="btn" style="background-color: #E5E5EA; color: #1C1C1E;" onclick="resetApp()">完成，归位</button>
+        </div>
 
             <div class="card">
                 <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; font-weight: 600;">📖 赛博书方 (认知药引)</div>
@@ -292,54 +318,61 @@
     };
 
     let aiResponseData = {};
+    let aiFetchPromise = null; // 用于存储后台预加载的请求
 
-    function goToStep(stepNum) {
-        if (stepNum === 2) {
-            const input = document.getElementById('anxietyInput').value.trim();
-            if (!input) {
-                alert("请先写下让你消耗的事物。");
-                return;
-            }
+    // 【新增】Step 1 点击时：跳转页面 + 偷偷发起请求
+    function startRitual() {
+        const anxietyText = document.getElementById('anxietyInput').value.trim();
+        if (!anxietyText) {
+            alert("请先写下让你消耗的事物。");
+            return;
         }
-        document.querySelectorAll('#module-divination .step').forEach(el => el.classList.remove('active'));
-        document.getElementById('step' + stepNum).classList.add('active');
         
-        if (stepNum === 3 && aiResponseData) {
-            document.getElementById('signTitle').innerText = aiResponseData.sign_title || "【未知】";
-            document.getElementById('cbtText').innerText = aiResponseData.cbt_explanation || "解析失败";
-        } else if (stepNum === 4 && aiResponseData) {
-            document.getElementById('socratesText').innerText = aiResponseData.socratic_question || "解析失败";
-        } else if (stepNum === 5 && aiResponseData) {
-            document.getElementById('actionText').innerText = aiResponseData.action_card || "解析失败";
-            document.getElementById('bookTitle').innerText = `《${aiResponseData.book_title || "心理学百科"}》`;
-            document.getElementById('bookQuote').innerText = `"${aiResponseData.book_quote || "去阅读，去发现。"}"`;
-            document.getElementById('bookIntro').innerText = aiResponseData.book_intro || "一本好书可以治愈灵魂。";
-        }
+        // 先让用户进入 Step 2 看动画锚定身心
+        goToStep(2);
+        
+        // 同时，后台静默发起大模型请求（预加载），并将这个 Promise 存起来
+        aiFetchPromise = fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ anxiety: anxietyText })
+        }).then(res => {
+            if (!res.ok) throw new Error('网络请求失败');
+            return res.json();
+        });
     }
 
+    // 重构的触发动画与等待逻辑
     async function triggerAI() {
         const btn = document.getElementById('btnShake');
         const status = document.getElementById('shakeStatus');
-        const anxietyText = document.getElementById('anxietyInput').value;
         
+        // 1. 开始圆形按钮的抖动/发光动画
         btn.disabled = true;
         btn.classList.add('shake-animation');
         status.style.display = 'block';
+        status.innerText = "正在链接深层潜意识...";
 
         try {
-            const response = await fetch('/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ anxiety: anxietyText })
-            });
+            // 2. 依然保留 1.5 秒的最低动画时间，维持玄学仪式感
+            const minAnimPromise = new Promise(resolve => setTimeout(resolve, 1500));
             
-            if (!response.ok) throw new Error('网络请求失败');
-            aiResponseData = await response.json();
+            // 同时等待“预加载的 AI 结果”和“1.5秒”
+            const [aiResult] = await Promise.all([aiFetchPromise, minAnimPromise]);
             
+            aiResponseData = aiResult; // 拿到数据
+            
+            // 3. 停止摇晃，平滑过渡到结果页
             btn.classList.remove('shake-animation');
-            btn.disabled = false;
-            status.style.display = 'none';
-            goToStep(3);
+            status.innerText = "签文已出，正在解析...";
+            
+            // 停顿 0.5 秒让用户看清状态字样，然后跳到第 3 步
+            setTimeout(() => {
+                status.style.display = 'none';
+                btn.disabled = false;
+                goToStep(3);
+            }, 500);
+
         } catch (error) {
             console.error('Error:', error);
             alert("神经元连接失败，请检查网络。");
@@ -353,6 +386,13 @@
         document.getElementById('anxietyInput').value = '';
         document.querySelectorAll('#module-divination textarea').forEach(ta => ta.value = '');
         aiResponseData = {};
+        aiFetchPromise = null; // 清空预加载缓存
+        
+        // 确保圆圈按钮状态归位
+        const btn = document.getElementById('btnShake');
+        btn.disabled = false;
+        btn.classList.remove('shake-animation');
+        document.getElementById('shakeStatus').style.display = 'none';
         
         goToStep(1);
     }
