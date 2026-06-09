@@ -184,6 +184,11 @@
             document.getElementById('socratesText').innerText = aiResponseData.socratic_question || "解析失败";
         } else if (stepNum === 5 && aiResponseData) {
             document.getElementById('actionText').innerText = aiResponseData.action_card || "解析失败";
+            
+            // 新增：填充书籍数据
+            document.getElementById('bookTitle').innerText = `《${aiResponseData.book_title || "心理学百科"}》`;
+            document.getElementById('bookQuote').innerText = `"${aiResponseData.book_quote || "去阅读，去发现。"}"`;
+            document.getElementById('bookIntro').innerText = aiResponseData.book_intro || "一本好书可以治愈灵魂。";
         }
     }
 
